@@ -12,6 +12,6 @@ def pixel_sort(image_path):
         pixels[i] = row_sorted
 
     result_img = Image.fromarray(pixels)
-    result_img.save("outputs/test1.jpg")
+    result_img.save("outputs/test1_sorted.jpg")
 
 pixel_sort("inputs/test1.jpg")
