@@ -37,34 +37,25 @@ def create_beat_sync_video(video_folder, audio_path, output_path):
     if not video_files:
         raise Exception("No .mov files found in the specified folder")
 
-    # Get beat timestamps
     beat_times = detect_beats(audio_path)
     
-    # Load audio for final composition
     audio = AudioFileClip(audio_path)
     
-    # Dictionary to track used segments for each video
     used_segments = {video: [] for video in video_files}
     
-    # Dictionary to store loaded video clips
     video_clips = {}
     
-    # List to store all clips
     final_clips = []
     
     try:
-        # Pre-load all videos
         for video_file in video_files:
             video_path = os.path.join(video_folder, video_file)
             video_clips[video_file] = VideoFileClip(video_path)
         
-        # Process each beat
         for beat_time in beat_times:
-            # Randomly select a video file
             video_file = random.choice(video_files)
             video = video_clips[video_file]
             
-            # Get random start time and duration
             start_time, duration = get_random_clip_times(
                 video.duration,
                 used_segments[video_file]
@@ -72,21 +63,16 @@ def create_beat_sync_video(video_folder, audio_path, output_path):
             
             if start_time is None:
                 continue
-                
-            # Add to used segments
+
             used_segments[video_file].append((start_time, start_time + duration))
             
-            # Extract clip
             clip = video.subclipped(start_time, start_time + duration).with_start(beat_time)
             final_clips.append(clip)
         
-        # Concatenate all clips
         final_video = concatenate_videoclips(final_clips, method="compose")
         
-        # Add the original audio
         final_video = final_video.with_audio(audio)
         
-        # Write the final video
         final_video.write_videofile(
             output_path,
             codec='libx264',
@@ -96,7 +82,6 @@ def create_beat_sync_video(video_folder, audio_path, output_path):
         )
         
     finally:
-        # Clean up all resources
         audio.close()
         for clip in video_clips.values():
             clip.close()
@@ -107,10 +92,9 @@ def create_beat_sync_video(video_folder, audio_path, output_path):
         except:
             pass
 
-# Example usage
 if __name__ == "__main__":
-    video_folder = "/Users/samherring/Desktop/SkiPics/clips"
-    audio_path = "/Users/samherring/Desktop/Projects/Art/skistuff/carti_snippet.mp3"
+    video_folder = "/path/to/video/directory"
+    audio_path = "/path/to/audio.mp3"
     output_path = "output_video.mp4"
     
     create_beat_sync_video(video_folder, audio_path, output_path)

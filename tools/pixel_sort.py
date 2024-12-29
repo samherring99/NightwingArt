@@ -7,7 +7,6 @@ def pixel_sort(image_path):
 
     for i in range(pixels.shape[0]):
         row = pixels[i]
-        # Sort based on pixel brightness
         row_sorted = sorted(row, key=lambda pixel: np.mean(pixel))
         pixels[i] = row_sorted
 
